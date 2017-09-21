@@ -98,6 +98,28 @@ public:
     void flushIt() { ostr_ << std::flush; }
 };
 
+/*! \~russian
+ * \brief
+ */
+class BinaryBufferIn{
+	//!
+	std::istream& bf_;
+public:
+	//!
+	explicit BinaryBufferIn(std::istream& bf) : bf_(bf) {}
+
+	template<typename T>
+	BinaryBufferIn& operator>> (T& elem);
+
+	template<typename T>
+	BinaryBufferIn& operator>> (std::vector<T>& vec);
+
+	template<typename T>
+	BinaryBufferIn& operator>> (std::valarray<T>& val);
+
+	BinaryBufferIn& operator>> (char* s);
+};
+
 #include "binarybuffer.tcc"
 
 #endif /* BINARYBUFFER_GASPARYANMOSES_21092017 */
