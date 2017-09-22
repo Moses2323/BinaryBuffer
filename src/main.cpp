@@ -1,11 +1,11 @@
 #include <iostream>
-#include "binarybuffer.h"
 #include <fstream>
 #include <string>
 #include <vector>
 #include <valarray>
 #include <iomanip>
 
+#include "binarybuffer.h"
 #include "mistake.h"
 
 using std::cout;
@@ -92,7 +92,7 @@ int main() {
 	if  (!foutBin.is_open())
 		print_mistake(__FUNCTION__, __LINE__, __FILE__, "can\'t open file with name\n" + filenameBin);
 
-	BinaryBuffer binbuf(foutBin);
+	BinaryBufferOutS binbuf(foutBin);
 
 	int vi = 3434;
 	float vf = 34.3353;
@@ -152,6 +152,50 @@ int main() {
 	checker(vald, valdR);
 
 	fin.close();
+
+	// ------------------------------- TEST INbuffer
+	std::cout << std::endl << "-----------------------------\nTEST in buffer:\n";
+
+	viR = 0;
+	vfR = 0;
+	vdR = 0;
+	for(size_t i=0; i <= std::strlen(cs); ++i){
+		csR[i] = '\0';
+	}
+	cppsR.clear();
+	cppsR = "";
+	cppsR.resize( cpps.size() );
+	for(size_t i=0; i < vecfR.size(); ++i){
+		vecfR[i] = 0;
+	}
+	for(size_t i=0; i < valdR.size(); ++i){
+		valdR[i] = 0;
+	}
+
+	fin.open(filenameBin, std::ios::in | std::ios::binary);
+
+	fin.read(reinterpret_cast<char*>(&viR), sizeof(int));
+	fin.read(reinterpret_cast<char*>(&vfR), sizeof(float));
+	fin.read(reinterpret_cast<char*>(&vdR), sizeof(double));
+	fin.read(reinterpret_cast<char*>(csR), std::strlen(cs));
+	fin.read(reinterpret_cast<char*>(&cppsR[0]), cppsR.size());
+	fin.read(reinterpret_cast<char*>(vecfR.data()), vecfR.size()*sizeof(float));
+	fin.read(reinterpret_cast<char*>(&valdR[0]), valdR.size()*sizeof(double));
+
+	BinaryBufferInS binbufin(fin);
+
+	binbufin >> viR >> vfR >> vdR >> csR >> cppsR >> vecfR >> valdR;
+
+	checker(vi, viR);
+	checker(vf, vfR);
+	checker(vd, vdR);
+	checker(cs, csR);
+	checker(cpps, cppsR);
+	checker(vecf, vecfR);
+	checker(vald, valdR);
+
+	fin.close();
+
 	delete[] csR;
 	std::cout << "SUCCESS" << std::endl;
 	return 0;

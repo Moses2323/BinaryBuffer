@@ -43,7 +43,7 @@
  * \endcode
  *
  */
-class BinaryBuffer {
+class BinaryBufferOutS {
     //! \~russian \brief Поток, в который происходит вывод.
     std::ostream & ostr_;
 
@@ -53,7 +53,7 @@ public:
      * \brief Конструктор.
      * \param ostr ссылка на поток, в который будет происходить вывод.
      */
-    explicit BinaryBuffer( std::ostream & ostr) : ostr_(ostr) {}
+    explicit BinaryBufferOutS( std::ostream & ostr) : ostr_(ostr) {}
 
     /*! \~russian
      * \brief Оператор вывода, который выводит элемент в виде бинарной информации.
@@ -61,7 +61,7 @@ public:
      * \return ссылку на текущий объект.
      */
     template<typename T>
-    BinaryBuffer& operator<< ( const T& t);
+    BinaryBufferOutS& operator<< ( const T& t);
 
     /*! \~russian
      * \brief Оператор вывода. Перегруженная версия для си-строк.
@@ -69,7 +69,7 @@ public:
      * \param t строка в си-стиле.
      * \return ссылку на текущий объект.
      */
-    BinaryBuffer& operator<< ( const char* t );
+    BinaryBufferOutS& operator<< ( const char* t );
 
     /*! \~russian
      * \brief Оператор вывода. Перегруженная версия для массива (vector).
@@ -78,7 +78,7 @@ public:
      * \return ссылку на текущий объект.
      */
     template<typename T>
-    BinaryBuffer& operator<< ( const std::vector<T>& vec );
+    BinaryBufferOutS& operator<< ( const std::vector<T>& vec );
 
     /*! \~russian
      * \brief Оператор вывода. Перегруженная версия для массива (valarray).
@@ -87,7 +87,7 @@ public:
      * \return ссылку на текущий объект.
      */
     template<typename T>
-    BinaryBuffer& operator<< ( const std::valarray<T>& val );
+    BinaryBufferOutS& operator<< ( const std::valarray<T>& val );
 
     /*! \~russian
      * \brief Функция для сброса буфера.
@@ -101,23 +101,23 @@ public:
 /*! \~russian
  * \brief
  */
-class BinaryBufferIn{
+class BinaryBufferInS{
 	//!
 	std::istream& bf_;
 public:
 	//!
-	explicit BinaryBufferIn(std::istream& bf) : bf_(bf) {}
+	explicit BinaryBufferInS(std::istream& bf) : bf_(bf) {}
 
 	template<typename T>
-	BinaryBufferIn& operator>> (T& elem);
+	BinaryBufferInS& operator>> (T& elem);
 
 	template<typename T>
-	BinaryBufferIn& operator>> (std::vector<T>& vec);
+	BinaryBufferInS& operator>> (std::vector<T>& vec);
 
 	template<typename T>
-	BinaryBufferIn& operator>> (std::valarray<T>& val);
+	BinaryBufferInS& operator>> (std::valarray<T>& val);
 
-	BinaryBufferIn& operator>> (char* s);
+	BinaryBufferInS& operator>> (char* s);
 };
 
 #include "binarybuffer.tcc"
