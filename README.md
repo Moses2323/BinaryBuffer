@@ -2,7 +2,7 @@
 BinaryBufferOutS для вывода в выбранный поток и BinaryBufferInS для вывода информации
 из потока.
 
-Классы при создании производит захват потока по ссылке и использует его методы .write() и .read() .
+Классы при создании производят захват потока по ссылке и использует его методы .write() и .read() .
 Запись и считывание производятся таким же образом, как и при работе с обычным потоком.
 Для классов с непрерывным блоком хранения данных (std::vector, std::valarray, std::string)
 написаны перегруженные версии операторов >> , << .
@@ -11,8 +11,6 @@ BinaryBufferOutS для вывода в выбранный поток и BinaryB
 ```C++
 std::ofstream fout;
 fout.open("test.txt", std::ios::out | std::ios::binary);
-
-BinaryBufferOutS binbuf(fout);
 
 int vi = 3434;
 float vf = 34.3353;
@@ -28,6 +26,7 @@ for(size_t i=0; i < N; ++i){
 	vald[i] = i * 99.232333;
 }
 
+BinaryBufferOutS binbuf(fout);
 binbuf << vi << vf << vd << cs << cpps << vecf << vald;
 binbuf.flushIt();
 
@@ -36,4 +35,4 @@ fout.close();
 
 Строки в Си стиле (const char*) выводятся в поток без завершающего символа '\0'.
 Строки в С++ стиле (std::string) также выводятся в поток без завершающего символа.
-Все вектора (std::vector, std::valarray) выводят числа подряд.
+Все вектора (std::vector, std::valarray) записываются в файл подряд без разделительных символов.
