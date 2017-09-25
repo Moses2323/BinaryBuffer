@@ -11,6 +11,8 @@
 #include <vector>
 #include <valarray>
 
+#define DEBUG 0
+
 /*! \~russian
  * \brief Бинарный буфер.
  *

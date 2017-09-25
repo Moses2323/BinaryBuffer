@@ -4,6 +4,7 @@
 #include <vector>
 #include <valarray>
 #include <iomanip>
+#include <ctime>
 
 #include "binarybuffer.h"
 #include "mistake.h"
@@ -84,9 +85,10 @@ void checker(const char* s1, const char* s2){
 }
 
 
-int main() {
+void errors_test(const std::string& filenameBin){
+	std::cout << "ERROR TEST starts" << endl;
+
 	std::ofstream foutBin;
-	std::string filenameBin = "testBin.txt";
 
 	foutBin.open(filenameBin, std::ios::out | std::ios::binary);
 	if  (!foutBin.is_open())
@@ -98,7 +100,7 @@ int main() {
 	float vf = 34.3353;
 	double vd = 555444.34234234;
 	const char* cs = "Hello, world!";
-	std::string cpps = "I\'am prohibited person";
+	std::string cpps = "I\'m prohibited person";
 	size_t N = 20;
 	std::vector<float> vecf(N);
 	std::valarray<double> vald(N);
@@ -116,7 +118,7 @@ int main() {
 	foutBin.close();
 
 	// -------------------------------------------------
-	std::cout << std::endl << "------------------------------" << std::endl << "EQUAL OR NOT:" << std::endl << std::endl;
+	std::cout << std::endl << "EQUAL OR NOT:" << std::endl << std::endl;
 
 	std::ifstream fin;
 	fin.open(filenameBin, std::ios::in | std::ios::binary );
@@ -154,7 +156,7 @@ int main() {
 	fin.close();
 
 	// ------------------------------- TEST INbuffer
-	std::cout << std::endl << "-----------------------------\nTEST in buffer:\n";
+	std::cout << std::endl << "TEST in buffer:\n";
 
 	viR = 0;
 	vfR = 0;
@@ -197,6 +199,94 @@ int main() {
 	fin.close();
 
 	delete[] csR;
-	std::cout << "SUCCESS" << std::endl;
+	std::cout << "ERROR TEST FINISHED" << endl;
+}
+
+void time_test(const std::string& filename, const std::string& filenameBin){
+	std::cout << "TIME TEST STARTS" << endl;
+
+	using VecType = float;
+
+	std::ofstream fout;
+	fout.open(filename, std::ios::out);
+	if  (!fout.is_open())
+		print_mistake(__FUNCTION__, __LINE__, __FILE__, "can\'t open file with name\n" + filenameBin);
+
+	std::ofstream foutBin;
+	foutBin.open(filenameBin, std::ios::out | std::ios::binary);
+	if  (!foutBin.is_open())
+		print_mistake(__FUNCTION__, __LINE__, __FILE__, "can\'t open file with name\n" + filenameBin);
+
+	size_t N = 10000;
+	std::vector<VecType> vecf(N);
+	std::valarray<VecType> valf(N);
+	VecType sqrtFirst = std::sqrt(2.0);
+	VecType sqrtSecond = std::sqrt(3.0);
+	for(size_t i=0; i < vecf.size(); ++i){
+		vecf[i] = i * sqrtFirst;
+		valf[i] = i * sqrtSecond;
+	}
+
+	long long int t1,t2,dt,dtBin;
+	size_t Nloops = 4;
+
+	std::cout << "VECTOR TEST:" << endl;
+
+	cout << "usual vector writing:" << endl;
+	dt = 0;
+	for(size_t il = 0; il < Nloops; ++il){
+		t1 = clock();
+		for(size_t i=0; i < vecf.size(); ++i){
+			fout << vecf[i];
+		}
+		fout << std::flush;
+		t2 = clock();
+		dt += t2 - t1;
+
+		sqrtFirst = std::sqrt( (il+1) * sqrtFirst );
+		std::cout << "\t\tsqrtFirst = " << sqrtFirst << ", loop finished" << std::endl;
+		for(size_t i=0; i < vecf.size(); ++i){
+			vecf[i] *= sqrtFirst;
+		}
+	}
+
+	cout << "binary vector writing:" << endl;
+	dtBin = 0;
+	sqrtFirst = std::sqrt(2.0);
+	BinaryBufferOutS binBufOut(foutBin);
+	for(size_t i=0; i < vecf.size(); ++i){
+		vecf[i] = i * sqrtFirst;
+	}
+	for(size_t il = 0; il < Nloops; ++il){
+		t1 = clock();
+		binBufOut << vecf;
+		binBufOut.flushIt();
+		t2 = clock();
+		dtBin += t2 - t1;
+
+		sqrtFirst = std::sqrt( (il+1) * sqrtFirst );
+		std::cout << "\t\tsqrtFirst = " << sqrtFirst << ", loop finished" << std::endl;
+		for(size_t i=0; i < vecf.size(); ++i){
+			vecf[i] *= sqrtFirst;
+		}
+	}
+
+	fout.close();
+	foutBin.close();
+
+	std::cout << "time of usual writing  = " << static_cast<double>(dt) / CLOCKS_PER_SEC << " sec" << endl;
+	std::cout << "time of binary writing = " << static_cast<double>(dtBin) / CLOCKS_PER_SEC << " sec" << endl;
+
+	std::cout << "VECTOR TEST FINISHED" << endl;
+
+	std::cout << "TIME TEST FINISHED" << std::endl;
+}
+
+int main() {
+
+	errors_test("testBin.txt");
+	std::cout << "------------------------------------------------------------" << endl;
+	time_test("timeTest.txt", "timeTestBin.txt");
+
 	return 0;
 }

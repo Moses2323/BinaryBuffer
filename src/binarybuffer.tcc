@@ -1,7 +1,7 @@
 /*
  * binarybuffer.cpp
  *
- *  Created on: 21 сент. 2017 г.
+ *  Created on: 21 пїЅпїЅпїЅпїЅ. 2017 пїЅ.
  *      Author: Gasparyan Moses
  */
 #include <cstring>
@@ -10,7 +10,11 @@
 template<typename T>
 inline BinaryBufferOutS& BinaryBufferOutS::operator<< ( const T& t){
     ostr_.write(reinterpret_cast<const char*>(&t), sizeof(T));
+
+	#if DEBUG >= 1
     std::cout << "element " << t << " has been written" << std::endl;
+	#endif
+
     return *this;
 }
 
@@ -18,13 +22,21 @@ template<>
 inline BinaryBufferOutS& BinaryBufferOutS::operator<<( const std::string& s ){
 	if ( !s.empty() )
 		ostr_.write( s.c_str(), s.size() );		// + 1 ?
+
+	#if DEBUG >= 1
 	std::cout << "std::string \"" << s << "\" has been written" << std::endl;
+	#endif
+
 	return *this;
 }
 
 inline BinaryBufferOutS& BinaryBufferOutS::operator<<( const char* t ){
     ostr_.write(t, std::strlen(t));		// + 1 ?
+
+	#if DEBUG >= 1
     std::cout << "c string \"" << t << "\" has been written" << std::endl;
+	#endif
+
     return *this;
 }
 
@@ -32,11 +44,15 @@ template<typename T>
 inline BinaryBufferOutS& BinaryBufferOutS::operator<<(const std::vector<T>& vec){
 	if ( ! vec.empty() )
 		ostr_.write( reinterpret_cast<const char*>(vec.data()), vec.size()*sizeof(T) );
+
+	#if DEBUG >= 1
 	std::cout << "vector [";
 	for(size_t i=0; i < vec.size(); ++i){
 		std::cout << " " << vec[i];
 	}
 	std::cout << "] has been written" << std::endl;
+	#endif
+
 	return *this;
 }
 
@@ -44,11 +60,15 @@ template<typename T>
 inline BinaryBufferOutS& BinaryBufferOutS::operator<<(const std::valarray<T>& val){
 	if ( val.size() > 0 )
 		ostr_.write( reinterpret_cast<const char*>(&val[0]), val.size()*sizeof(T) );
+
+	#if DEBUG >= 1
 	std::cout << "valarray [";
 	for(size_t i=0; i < val.size(); ++i){
 		std::cout << " " << val[i];
 	}
 	std::cout << "] has been written" << std::endl;
+	#endif
+
 	return *this;
 }
 

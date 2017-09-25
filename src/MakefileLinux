@@ -1,4 +1,4 @@
-# for windows mingw32-make
+# for linux
 
 CXX=g++
 CXXFLAGS=-std=c++14 -O3 -Wall -pedantic
